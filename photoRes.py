@@ -1,24 +1,22 @@
 #!/usr/bin/env python
-import ADC0832
+import RPi.GPIO as GPIO
 import time
 
-def init():
-	ADC0832.setup()
+GPIO.setmode(GPIO.BCM)
+PIR_PIN = 7
+GPIO.setup(PIR_PIN, GPIO.IN)
 
-def loop():
-	while True:
-		res = ADC0832.getResult() - 80
-		if res < 0:
-			res = 0
-		if res > 100:
-			res = 100
-		print 'res = %d' % res
-		time.sleep(0.2)
+def MOTION(PIR_PIN):
+               print “Motion Detected!”
 
-if __name__ == '__main__':
-	init()
-	try:
-		loop()
-	except KeyboardInterrupt: 
-		ADC0832.destroy()
-		print 'The end !'
+print “PIR Module Test (CTRL+C to exit)”
+time.sleep(2)
+print “Ready”
+
+try:
+               GPIO.add_event_detect(PIR_PIN, GPIO.RISING, callback=MOTION)
+               while 1:
+                              time.sleep(100)
+except KeyboardInterrupt:
+               print “ Quit”
+               GPIO.cleanup()
