@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
  
 MQTT_SERVER = "localhost"
-MQTT_PATH = "test_channel"
+MQTT_PATH = "rpi/gpio"
  
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
