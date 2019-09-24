@@ -15,7 +15,7 @@ from adafruit_motor import motor
 i2c = busio.I2C(SCL, SDA)
 
 # Create a simple PCA9685 class instance for the Motor FeatherWing's default address.
-pca = PCA9685(i2c, address=0x60)
+pca = PCA9685(i2c, address=0x40)
 pca.frequency = 100
 
 # Motor 1 is channels 9 and 10 with 8 held high.
@@ -27,36 +27,39 @@ pca.frequency = 100
 # cases. A capacitor can be used to help prevent this. The demo uses motor 4 because it worked ok
 # in testing without a capacitor.
 # See here for more info: https://learn.adafruit.com/adafruit-motor-shield-v2-for-arduino/faq#faq-13
-pca.channels[7].duty_cycle = 0xffff
-motor4 = motor.DCMotor(pca.channels[5], pca.channels[6])
+#pca.channels[7].duty_cycle = 0xffff
+motor_rl = motor.DCMotor(pca.channels[10], pca.channels[9])
+motor_rr = motor.DCMotor(pca.channels[7], pca.channels[8])
+motor_hl = motor.DCMotor(pca.channels[2], pca.channels[1])
+motor_hr = motor.DCMotor(pca.channels[3], pca.channels[4])
 
 print("Forwards slow")
-motor4.throttle = 0.5
-print("throttle:", motor4.throttle)
+motor_rr.throttle = 0.5
+motor_hr.throttle = 0.5
+
+motor_rl.throttle = 0.5
+motor_hl.throttle = 0.5
+
+print("throttle:", motor_rr.throttle)
+time.sleep(1)
+
+print("Forwards fast")
+motor_rr.throttle = -1
+motor_hr.throttle = -1
+
+motor_rl.throttle = -1
+motor_hl.throttle = -1
+
+print("throttle:", motor_rr.throttle)
 time.sleep(1)
 
 print("Forwards")
-motor4.throttle = 1
-print("throttle:", motor4.throttle)
-time.sleep(1)
+motor_rr.throttle = 0
+motor_rl.throttle = 0
 
-print("Backwards")
-motor4.throttle = -1
-print("throttle:", motor4.throttle)
+motor_hl.throttle = 0
+motor_hr.throttle = 0
+print("throttle:", motor_rr.throttle)
 time.sleep(1)
-
-print("Backwards slow")
-motor4.throttle = -0.5
-print("throttle:", motor4.throttle)
-time.sleep(1)
-
-print("Stop")
-motor4.throttle = 0
-print("throttle:", motor4.throttle)
-time.sleep(1)
-
-print("Spin freely")
-motor4.throttle = None
-print("throttle:", motor4.throttle)
 
 pca.deinit()
