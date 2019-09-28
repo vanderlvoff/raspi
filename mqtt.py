@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 #servo/dc motor part
 import time
+import json
 
 from board import SCL, SDA
 from threading import Thread
@@ -10,6 +11,7 @@ import busio
 #   https://github.com/adafruit/Adafruit_CircuitPython_PCA9685
 from adafruit_pca9685 import PCA9685
 from adafruit_motor import servo
+from adafruit_motor import motor
 
 MQTT_SERVER = "localhost"
 MQTT_PATH = "rpi/gpio"
@@ -18,13 +20,18 @@ i2c = busio.I2C(SCL, SDA)
 
 # Create a simple PCA9685 class instance.
 pca = PCA9685(i2c)
-pca.frequency = 50
+pca.frequency = 100
 
 current_angle = 72
 #Initialize camera servo
 servo15 = servo.Servo(pca.channels[15])
 servo15.angle = current_angle
 stop_thread = False
+
+motor_rl = motor.DCMotor(pca.channels[10], pca.channels[9])
+motor_rr = motor.DCMotor(pca.channels[7], pca.channels[8])
+motor_hl = motor.DCMotor(pca.channels[2], pca.channels[1])
+motor_hr = motor.DCMotor(pca.channels[3], pca.channels[4])
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -38,9 +45,11 @@ def moveCamera(msg):
     global current_angle
     global t
     global stop_thread
-    message = format(msg.payload.decode("UTF-8"))
+    message_json = format(msg.payload.decode("UTF-8"))
+    msg = json.loads(message_json)
+    message = msg['msg']
     
-    if message == "camera_stop":
+    if message == "camera_stop" or message == "stop":
         stop_thread = False
        
     while message == "camera_left":
@@ -61,15 +70,69 @@ def moveCamera(msg):
         
     if message == "camera_forward":
         servo15.angle = 72
-        current_angle = current_angle
-        # more callbacks, etc
-    
+        current_angle = 72
+    # more callbacks, etc
+
+    while message == "forward":
+        motor_rr.throttle = 1
+        motor_hr.throttle = 1
+        motor_rl.throttle = 1
+        motor_hl.throttle = 1
+        if stop_thread:
+            motor_rr.throttle = 0
+            motor_hr.throttle = 0
+            motor_rl.throttle = 0
+            motor_hl.throttle = 0
+            stop_thread = False
+            break
+        
+    while message == "right":
+        motor_rr.throttle = -1
+        motor_hr.throttle = -1
+        motor_rl.throttle = 1
+        motor_hl.throttle = 1
+        if stop_thread:
+            motor_rr.throttle = 0
+            motor_hr.throttle = 0
+            motor_rl.throttle = 0
+            motor_hl.throttle = 0
+            stop_thread = False
+            break
+        
+    while message == "left":
+        motor_rr.throttle = 1
+        motor_hr.throttle = 1
+        motor_rl.throttle = -1
+        motor_hl.throttle = -1
+        if stop_thread:
+            motor_rr.throttle = 0
+            motor_hr.throttle = 0
+            motor_rl.throttle = 0
+            motor_hl.throttle = 0
+            stop_thread = False
+            break
+        
+    while message == "back":
+        motor_rr.throttle = -1
+        motor_hr.throttle = -1
+        motor_rl.throttle = -1
+        motor_hl.throttle = -1
+        if stop_thread:
+            motor_rr.throttle = 0
+            motor_hr.throttle = 0
+            motor_rl.throttle = 0
+            motor_hl.throttle = 0
+            stop_thread = False
+            break
+
 t = Thread(target=moveCamera, args=())
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     global t
     global stop_thread
+    message2 = format(msg.payload.decode("UTF-8"))
+    print(message2)
     if t.isAlive():
         stop_thread = True
         t.join()     
