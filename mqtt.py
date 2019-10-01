@@ -12,9 +12,13 @@ import busio
 from adafruit_pca9685 import PCA9685
 from adafruit_motor import servo
 from adafruit_motor import motor
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
 
 MQTT_SERVER = "localhost"
 MQTT_PATH = "rpi/gpio"
+RELAIS_1_GPIO = 24
+GPIO.setup(RELAIS_1_GPIO, GPIO.OUT)
 
 i2c = busio.I2C(SCL, SDA)
 
@@ -124,6 +128,13 @@ def moveCamera(msg):
             motor_hl.throttle = 0
             stop_thread = False
             break
+
+    if message == "switch-motor-engine":
+        if msg['status'] == 0:
+            GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
+        else:
+            GPIO.output(RELAIS_1_GPIO, GPIO.HIGH)
+
 
 t = Thread(target=moveCamera, args=())
 
