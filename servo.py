@@ -8,6 +8,10 @@ import busio
 from adafruit_pca9685 import PCA9685
 from adafruit_motor import servo
 
+#As we are using GPIO for switching relay
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
 i2c = busio.I2C(SCL, SDA)
 
 # Create a simple PCA9685 class instance.
@@ -18,6 +22,11 @@ pca = PCA9685(i2c)
 # pca = PCA9685(i2c, reference_clock_speed=25630710)
 pca.frequency = 50
 
+
+#Here I switch on the realy to feed servo shield
+RELAIS_1_GPIO = 24
+GPIO.setup(RELAIS_1_GPIO, GPIO.OUT)
+GPIO.output(RELAIS_1_GPIO, GPIO.HIGH)
 # To get the full range of the servo you will likely need to adjust the min_pulse and max_pulse to
 # match the stall points of the servo.
 # This is an example for the Sub-micro servo: https://www.adafruit.com/product/2201
@@ -36,14 +45,14 @@ pca.frequency = 50
 # The pulse range is 750 - 2250 by default. This range typically gives 135 degrees of
 # range, but the default is to use 180 degrees. You can specify the expected range if you wish:
 # servo7 = servo.Servo(pca.channels[7], actuation_range=135)
-servo7 = servo.Servo(pca.channels[15])
+servo7 = servo.Servo(pca.channels[14])
 
 # We sleep in the loops to give the servo time to move into position.
-for i in range(180):
+for i in range(160):
     servo7.angle = i
     time.sleep(0.03)
-for i in range(180):
-    servo7.angle = 180 - i
+for i in range(160):
+    servo7.angle = 160 - i
     time.sleep(0.03)
 
 # You can also specify the movement fractionally.
@@ -53,6 +62,6 @@ while fraction < 1.0:
     fraction += 0.01
     time.sleep(0.03)
     
-servo7.angle = 90
-
+servo7.angle = 110
+GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
 pca.deinit()
