@@ -89,7 +89,7 @@ def moveCamera(msg):
             
     while message == "sonic_left":
         time.sleep(0.1)
-        local_angle = current_angle + 1
+        local_angle = current_angle_servo_1 + 1
         servo14.angle = local_angle
         current_angle_servo_1 = local_angle
         if stop_thread:
@@ -97,24 +97,24 @@ def moveCamera(msg):
 
     while message == "sonic_right":
         time.sleep(0.1)
-        local_angle = current_angle - 1
+        local_angle = current_angle_servo_1 - 1
         servo14.angle = local_angle
-        current_angle_servo_one = local_angle
+        current_angle_servo_1 = local_angle
         if stop_thread:
             break
 
     while message == "sonic_down":
         time.sleep(0.1)
-        local_angle = current_angle + 1
-        servo14.angle = local_angle
+        local_angle = current_angle_servo_2 + 1
+        servo13.angle = local_angle
         current_angle_servo_2 = local_angle
         if stop_thread:
             break
 
     while message == "sonic_up":
         time.sleep(0.1)
-        local_angle = current_angle - 1
-        servo14.angle = local_angle
+        local_angle = current_angle_servo_2 - 1
+        servo13.angle = local_angle
         current_angle_servo_2 = local_angle
         if stop_thread:
             break
@@ -146,6 +146,13 @@ def moveCamera(msg):
         servo15.angle = 72
         current_angle = 72
     # more callbacks, etc
+
+        
+    if message == "ultrasonic_align":
+        servo13.angle = 150 #altitude
+        current_angle_servo_2 = 150
+        servo14.angle = 120#horizon
+        current_angle_servo_1 = 120
 
     while message == "forward":
         motor_rr.throttle = 1
