@@ -6,13 +6,12 @@ class UltrasonicSensor:
     #set GPIO Pins
     GPIO_TRIGGER = 27
     GPIO_ECHO = 17
-    
-    #set GPIO direction (IN / OUT)
-    GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
-    GPIO.setup(GPIO_ECHO, GPIO.IN)
 
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
+        #set GPIO direction (IN / OUT)
+        GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
+        GPIO.setup(self.GPIO_ECHO, GPIO.IN)
 
     def distance(self):
         # set Trigger to HIGH
