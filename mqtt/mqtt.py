@@ -7,7 +7,7 @@ from relay import Relay
 from ultrasonic_sensor import UltrasonicSensor
 from dc import DC
 from servo_motors import ServoMotors
-from led import led
+from led import Led
 
 MQTT_SERVER = "localhost"
 MQTT_PATH = "rpi/gpio"
@@ -37,24 +37,26 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_PATH)
      
 def moveCamera(msg):
-
+    print("sign")
     message_json = format(msg.payload.decode("UTF-8"))
+    print(message_json)
     msg = json.loads(message_json)
     message = msg['msg']
     
-    if message == current_message:
-        return
-    else:
-        self.servo15.stop()
-        self.servo14.stop()
-        self.dcmotor.stop()
+    
+    #if message == current_message:
+    #    return
+    #else:
+    #    self.servo15.stop()
+    #    self.servo14.stop()
+    #    self.dcmotor.stop()
 
     #UltraSonic sensor
-    distanceObj = UltrasonicSensor() 
-    dist = distanceObj.distance()
-    current_distance = dist
+    #distanceObj = UltrasonicSensor() 
+    #dist = distanceObj.distance()
+    #current_distance = dist
 
-    print ("Measured Distance = %.1f cm" % dist)
+    #print ("Measured Distance = %.1f cm" % dist)
     
     if message == "sonic_left":
         servo15.moveForward()
@@ -85,8 +87,8 @@ def moveCamera(msg):
         servo15.init()
         
     if message == "ultrasonic_align":
-        servo13.init(150) #altitude
-        servo14.init(120) #horizon
+        servo14.init(150) #altitude
+        servo15.init(120) #horizon
 
     if message == "forward":
         dcmotor.forward()
@@ -99,12 +101,20 @@ def moveCamera(msg):
         
     if message == "back":
         dcmotor.back()
+        
+    if message == "stop":
+        dcmotor.stop()
 
     if message == "switch-motor-engine":
+        ledObj = Led()
         relayObj = Relay()
         relayObj.switchRelay(status = msg['status'])
+        if msg['status'] == 1:
+            ledObj.lightsOn()
+        else:
+            ledObj.lightsOff()
 
-t = Thread(target=moveCamera, args=())
+#t = Thread(target=moveCamera, args=())
 
 # def on_message2(client, userdata, msg):
 #     print("On message 2")
@@ -112,7 +122,8 @@ t = Thread(target=moveCamera, args=())
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     message2 = format(msg.payload.decode("UTF-8"))
-    self.moveCamera(msg)
+    print("This is on publish1: "+message2)
+    moveCamera(msg)
     
 def on_publish(client, userdata, mid):
     print("This is on publish")

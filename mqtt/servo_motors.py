@@ -13,7 +13,7 @@ class ServoMotors:
     current_servo_angle = 90
     i2c = busio.I2C(SCL, SDA)
     # Create a simple PCA9685 class instance.
-    pca = PCA9685(i2c)
+    pca = PCA9685(i2c, address=0x41)
     DEFAULT_NUMBER = 13
     servoMotor = servo.Servo(pca.channels[DEFAULT_NUMBER])
     
