@@ -7,7 +7,7 @@ import busio
 import time
 import json
 
-class DC:
+class DC4WD:
     i2c = busio.I2C(SCL, SDA)
     # Create a simple PCA9685 class instance.
     pca = PCA9685(i2c)
