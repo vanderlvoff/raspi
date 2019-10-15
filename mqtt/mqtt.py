@@ -8,6 +8,7 @@ from ultrasonic_sensor import UltrasonicSensor
 from dc import DC
 from servo_motors import ServoMotors
 from led import Led
+from robot import Robot
 
 MQTT_SERVER = "localhost"
 MQTT_PATH = "rpi/gpio"
@@ -27,6 +28,8 @@ stop_thread = False
 #Initialize DC class
 #Dc motor object
 dcmotor = DC()
+#Robot object
+robot = Robot()
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -105,14 +108,19 @@ def moveCamera(msg):
     if message == "stop":
         dcmotor.stop()
 
-    if message == "switch-motor-engine":
+    if message == "robot_one":
+        robot.stop()
+
+    if message == "toggle_light":
         ledObj = Led()
-        relayObj = Relay()
-        relayObj.switchRelay(status = msg['status'])
         if msg['status'] == 1:
             ledObj.lightsOn()
         else:
             ledObj.lightsOff()
+
+    if message == "switch-motor-engine":
+        relayObj = Relay()
+        relayObj.switchRelay(status = msg['status'])
 
 #t = Thread(target=moveCamera, args=())
 
