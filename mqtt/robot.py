@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import threading
 from dc import DC
+import time
 from relay import Relay
 from ultrasonic_sensor import UltrasonicSensor
 
@@ -9,24 +10,25 @@ class Robot:
     relay = Relay()
     sensor = UltrasonicSensor()
     status = 0
+    robotIsRight = True
 
-    def startProgram(self):
+    def get_distance(self):
         self.relay.switchRelay(1)
         self.dcmotor.forward()
         self.status = 1
-        x = threading.Thread(target=get_distance, args=(1,))
-        x.start()
-    
-    def get_distance(self):
-        while True:
+        while self.robotIsRight:
             time.sleep(0.5)
-            dist = sensor.distance()
+            dist = self.sensor.distance()
+            print(str(dist))
             if dist < 10:
                 self.motorStop()
                 self.status = 0
-            else if dist > 10 and self.status = 0:
+            else:
+                self.relay.switchRelay(1)
                 self.dcmotor.forward()
                 
+    def startProgram(self):
+        x = threading.Thread(target=self.get_distance).start()
 
     def motorStop(self):
         self.dcmotor.stop()

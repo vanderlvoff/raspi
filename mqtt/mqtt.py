@@ -40,7 +40,6 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_PATH)
      
 def moveCamera(msg):
-    print("sign")
     message_json = format(msg.payload.decode("UTF-8"))
     print(message_json)
     msg = json.loads(message_json)
@@ -109,7 +108,8 @@ def moveCamera(msg):
         dcmotor.stop()
 
     if message == "robot_one":
-        robot.stop()
+        robot.robotIsRight = True
+        robot.startProgram()
 
     if message == "toggle_light":
         ledObj = Led()
@@ -117,6 +117,10 @@ def moveCamera(msg):
             ledObj.lightsOn()
         else:
             ledObj.lightsOff()
+
+    if message == "robot_mode_full_stop":
+        robot.robotIsRight = False
+        robot.motorStop()
 
     if message == "switch-motor-engine":
         relayObj = Relay()
