@@ -8,7 +8,6 @@ from ultrasonic_sensor import UltrasonicSensor
 from dc import DC
 from servo_motors import ServoMotors
 from led import Led
-from magneto import SL_MPU9250
 
 MQTT_SERVER = "localhost"
 MQTT_PATH = "rpi/gpio"
@@ -28,11 +27,6 @@ stop_thread = False
 #Initialize DC class
 #Dc motor object
 dcmotor = DC()
-#Magnetometer
-sensor = SL_MPU9250(0x68,1)
-sensor.resetRegister()
-sensor.powerWakeUp()
-sensor.setMagRegister('100Hz','16bit')
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -98,10 +92,6 @@ def moveCamera(msg):
 
     if message == "forward":
         dcmotor.forward()
-        mag = sensor.getMag()
-        print ("%+8.7f" % mag[0] + " ")
-        print ("%+8.7f" % mag[1] + " ")
-        print ("%+8.7f" % mag[2])
         
     if message == "right":
         dcmotor.right()

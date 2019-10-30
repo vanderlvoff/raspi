@@ -6,6 +6,7 @@ from board import SCL, SDA
 import busio
 import time
 import json
+from magneto import SL_MPU9250
 
 class DC:
     LE_MAX = 0.80
@@ -15,12 +16,22 @@ class DC:
     motor_hl = motor.DCMotor(pca.channels[2], pca.channels[1])
     motor_hr = motor.DCMotor(pca.channels[3], pca.channels[4])
     
+    #Magnetometer
+    sensor = SL_MPU9250(0x68,1)
+    sensor.resetRegister()
+    sensor.powerWakeUp()
+    sensor.setMagRegister('100Hz','16bit')
+
     def __init__(self):
         self.pca.frequency = 100
 
     def forward(self):
         self.motor_hr.throttle = 1
         self.motor_hl.throttle = self.LE_MAX
+        mag = sensor.getMag()
+        print ("%+8.7f" % mag[0] + " ")
+        print ("%+8.7f" % mag[1] + " ")
+        print ("%+8.7f" % mag[2])
 
     def stop(self):
         self.motor_hr.throttle = 0
