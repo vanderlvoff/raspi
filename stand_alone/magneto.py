@@ -6,7 +6,6 @@ import time
 
 # Strawberry Linux社の「MPU-9250」からI2Cでデータを取得するクラス(python 2)
 # https://strawberry-linux.com/catalog/items?code=12250
-# Fixed gor Python 3 by Yury Lvov
 #
 # 2016-05-03 Boyaki Machine
 class SL_MPU9250:
@@ -323,3 +322,35 @@ class SL_MPU9250:
 
         print ("Gyro calibration complete")
         return self.offsetGyroX, self.offsetGyroY, self.offsetGyroZ
+
+
+if __name__ == "__main__":
+    sensor  = SL_MPU9250(0x68,1)
+    sensor.resetRegister()
+    sensor.powerWakeUp()
+    sensor.setAccelRange(8,True)
+    sensor.setGyroRange(1000,True)
+    sensor.setMagRegister('100Hz','16bit')
+    # sensor.selfTestMag()
+
+    while True:
+        now     = time.time()
+        acc     = sensor.getAccel()
+        gyr     = sensor.getGyro()
+        mag     = sensor.getMag()
+        print ("%+8.7f" % acc[0] + " ")
+        print ("%+8.7f" % acc[1] + " ")
+        print ("%+8.7f" % acc[2] + " ")
+        print (" |   ")
+        print ("%+8.7f" % gyr[0] + " ")
+        print ("%+8.7f" % gyr[1] + " ")
+        print ("%+8.7f" % gyr[2] + " ")
+        print (" |   ")
+        print ("%+8.7f" % mag[0] + " ")
+        print ("%+8.7f" % mag[1] + " ")
+        print ("%+8.7f" % mag[2])
+
+        sleepTime       = 3 - (time.time() - now)
+        if sleepTime < 0.0:
+            continue
+        time.sleep(sleepTime)

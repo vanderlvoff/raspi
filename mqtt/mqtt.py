@@ -8,7 +8,7 @@ from ultrasonic_sensor import UltrasonicSensor
 from dc import DC
 from servo_motors import ServoMotors
 from led import Led
-from robot import Robot
+from magneto import SL_MPU9250
 
 MQTT_SERVER = "localhost"
 MQTT_PATH = "rpi/gpio"
@@ -28,8 +28,11 @@ stop_thread = False
 #Initialize DC class
 #Dc motor object
 dcmotor = DC()
-#Robot object
-robot = Robot()
+#Magnetometer
+sensor = SL_MPU9250(0x68,1)
+sensor.resetRegister()
+sensor.powerWakeUp()
+sensor.setMagRegister('100Hz','16bit')
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -40,6 +43,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_PATH)
      
 def moveCamera(msg):
+    print("sign")
     message_json = format(msg.payload.decode("UTF-8"))
     print(message_json)
     msg = json.loads(message_json)
@@ -94,6 +98,10 @@ def moveCamera(msg):
 
     if message == "forward":
         dcmotor.forward()
+        mag = sensor.getMag()
+        print ("%+8.7f" % mag[0] + " ")
+        print ("%+8.7f" % mag[1] + " ")
+        print ("%+8.7f" % mag[2])
         
     if message == "right":
         dcmotor.right()
@@ -107,24 +115,14 @@ def moveCamera(msg):
     if message == "stop":
         dcmotor.stop()
 
-    if message == "robot_one":
-        robot.robotIsRight = True
-        robot.startProgram()
-
-    if message == "toggle_light":
+    if message == "switch-motor-engine":
         ledObj = Led()
+        relayObj = Relay()
+        relayObj.switchRelay(status = msg['status'])
         if msg['status'] == 1:
             ledObj.lightsOn()
         else:
             ledObj.lightsOff()
-
-    if message == "robot_mode_full_stop":
-        robot.robotIsRight = False
-        robot.motorStop()
-
-    if message == "switch-motor-engine":
-        relayObj = Relay()
-        relayObj.switchRelay(status = msg['status'])
 
 #t = Thread(target=moveCamera, args=())
 
