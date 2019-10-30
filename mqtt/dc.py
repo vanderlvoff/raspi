@@ -39,6 +39,7 @@ class DC:
 
     def forward(self):
         self.getDirectionFlag = True
+        self.controlCourseFlag = True
         self.motor_hr.throttle = 1
         self.motor_hl.throttle = self.LE_MAX
         x = threading.Thread(target=self.getDirection).start()
