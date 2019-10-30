@@ -21,8 +21,6 @@ current_distance = 0.1
 servo14 = ServoMotors(channel = 14)
 #cturret basement servo motor
 servo15 = ServoMotors(channel = 15)
-#thread termination flag
-stop_thread = False
 
 #Initialize DC class
 #Dc motor object
