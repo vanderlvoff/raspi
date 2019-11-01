@@ -8,6 +8,7 @@ from ultrasonic_sensor import UltrasonicSensor
 from dc import DC
 from servo_motors import ServoMotors
 from led import Led
+from vocalizer import Vocalizer
 
 MQTT_SERVER = "localhost"
 MQTT_PATH = "rpi/gpio"
@@ -25,6 +26,9 @@ servo15 = ServoMotors(channel = 15)
 #Initialize DC class
 #Dc motor object
 dcmotor = DC()
+
+#vocalizer
+voice = Vocalizer()
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
