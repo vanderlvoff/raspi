@@ -16,7 +16,7 @@ class DC:
     controlCourseFlag = True
     getDirectionFlag = True
     
-    LE_MAX = 0.80
+    LE_MAX = 0.8
     LE_CORRECTION = 0.7
     
     RE_MAX = 1

@@ -104,9 +104,11 @@ def moveCamera(msg):
         dcmotor.stop()
 
     if message == "switch-motor-engine":
-        ledObj = Led()
         relayObj = Relay()
         relayObj.switchRelay(status = msg['status'])
+
+    if message == "toggle_light":
+        ledObj = Led()
         if msg['status'] == 1:
             ledObj.lightsOn()
         else:
