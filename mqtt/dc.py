@@ -16,11 +16,11 @@ class DC:
     controlCourseFlag = True
     getDirectionFlag = True
     
-    LE_MAX = 0.80
-    LE_CORRECTION = 0.7
+    LE_MAX = 1
+    LE_CORRECTION = 0.9
     
     RE_MAX = 1
-    RE_CORRECTION = 0.8
+    RE_CORRECTION = 0.9
     
     i2c = busio.I2C(SCL, SDA)
     # Create a simple PCA9685 class instance.
@@ -40,7 +40,7 @@ class DC:
     def forward(self):
         self.getDirectionFlag = True
         self.controlCourseFlag = True
-        self.motor_hr.throttle = 1
+        self.motor_hr.throttle = sel.RE_MAX
         self.motor_hl.throttle = self.LE_MAX
         x = threading.Thread(target=self.getDirection).start()
 

@@ -4,10 +4,12 @@ import json
 
 #custom classes
 from relay import Relay
+
 from ultrasonic_sensor import UltrasonicSensor
 from dc import DC
 from servo_motors import ServoMotors
 from led import Led
+#from vocalizer import Vocalizer
 from robot import Robot
 
 MQTT_SERVER = "localhost"
@@ -29,6 +31,9 @@ dcmotor = DC()
 #Robot object
 robot = Robot()
 
+#vocalizer
+#voice = Vocalizer()
+
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -36,6 +41,7 @@ def on_connect(client, userdata, flags, rc):
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe(MQTT_PATH)
+    #self.voice.speak("I am connected")
      
 def moveCamera(msg):
     message_json = format(msg.payload.decode("UTF-8"))
@@ -83,8 +89,8 @@ def moveCamera(msg):
     # if message == "camera_right":
     #     servo13.moveBack()
         
-    if message == "camera_forward":
-        servo15.init()
+    #if message == "camera_forward":
+       # servo15.init()
         
     if message == "ultrasonic_align":
         servo14.init(150) #altitude

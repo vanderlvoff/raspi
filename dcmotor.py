@@ -28,38 +28,38 @@ pca.frequency = 100
 # in testing without a capacitor.
 # See here for more info: https://learn.adafruit.com/adafruit-motor-shield-v2-for-arduino/faq#faq-13
 #pca.channels[7].duty_cycle = 0xffff
-motor_rl = motor.DCMotor(pca.channels[10], pca.channels[9])
-motor_rr = motor.DCMotor(pca.channels[7], pca.channels[8])
+motor_rl = motor.DCMotor(pca.channels[3], pca.channels[4])
+#motor_rr = motor.DCMotor(pca.channels[7], pca.channels[8])
 motor_hl = motor.DCMotor(pca.channels[2], pca.channels[1])
-motor_hr = motor.DCMotor(pca.channels[3], pca.channels[4])
+#motor_hr = motor.DCMotor(pca.channels[3], pca.channels[4])
 
 print("Forwards slow")
-motor_rr.throttle = 0.5
-motor_hr.throttle = 0.5
+#motor_rr.throttle = 0.5
+#motor_hr.throttle = 0.5
 
 motor_rl.throttle = 0.5
 motor_hl.throttle = 0.5
 
-print("throttle:", motor_rr.throttle)
+print("throttle:", motor_rl.throttle)
 time.sleep(1)
 
 print("Forwards fast")
-motor_rr.throttle = -1
-motor_hr.throttle = -1
+#motor_rr.throttle = -1
+#motor_hr.throttle = -1
 
-motor_rl.throttle = -1
-motor_hl.throttle = -1
+motor_rl.throttle = 1
+motor_hl.throttle = 1
 
-print("throttle:", motor_rr.throttle)
-time.sleep(1)
+print("throttle:", motor_rl.throttle)
+time.sleep(6)
 
 print("Forwards")
-motor_rr.throttle = 0
-motor_rl.throttle = 0
+#motor_rr.throttle = 0
+#motor_rl.throttle = 0
 
+motor_rl.throttle = 0
 motor_hl.throttle = 0
-motor_hr.throttle = 0
-print("throttle:", motor_rr.throttle)
+print("throttle:", motor_rl.throttle)
 time.sleep(1)
 
 pca.deinit()
