@@ -10,6 +10,7 @@ from dc import DC
 from servo_motors import ServoMotors
 from led import Led
 #from vocalizer import Vocalizer
+from robot import Robot
 
 MQTT_SERVER = "localhost"
 MQTT_PATH = "rpi/gpio"
@@ -27,6 +28,8 @@ servo15 = ServoMotors(channel = 15)
 #Initialize DC class
 #Dc motor object
 dcmotor = DC()
+#Robot object
+robot = Robot()
 
 #vocalizer
 #voice = Vocalizer()
@@ -41,7 +44,6 @@ def on_connect(client, userdata, flags, rc):
     #self.voice.speak("I am connected")
      
 def moveCamera(msg):
-    print("sign")
     message_json = format(msg.payload.decode("UTF-8"))
     print(message_json)
     msg = json.loads(message_json)
@@ -109,9 +111,9 @@ def moveCamera(msg):
     if message == "stop":
         dcmotor.stop()
 
-    if message == "switch-motor-engine":
-        relayObj = Relay()
-        relayObj.switchRelay(status = msg['status'])
+    if message == "robot_one":
+        robot.robotIsRight = True
+        robot.startProgram()
 
     if message == "toggle_light":
         ledObj = Led()
@@ -119,6 +121,14 @@ def moveCamera(msg):
             ledObj.lightsOn()
         else:
             ledObj.lightsOff()
+
+    if message == "robot_mode_full_stop":
+        robot.robotIsRight = False
+        robot.motorStop()
+
+    if message == "switch-motor-engine":
+        relayObj = Relay()
+        relayObj.switchRelay(status = msg['status'])
 
 #t = Thread(target=moveCamera, args=())
 
