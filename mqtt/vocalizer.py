@@ -1,8 +1,19 @@
-import pyttsx3
+#import pyttsx3
 
-class Vocalizer:
+#class Vocalizer:
 
-    def speak(self, text):
-        engine = pyttsx3.init()
-        engine.say(text)
-        engine.runAndWait()
+    #def __init__(self):
+    #    #Nothing
+    #    print("ok")
+        
+#    def speak(self, text):
+#        engine = pyttsx3.init(driverName='espeak')
+#        engine.say(text)
+#        engine.runAndWait()
+        
+#voc = Vocalizer()
+#voc.speak("Hello world!")
+
+from espeak import espeak
+
+espeak.synth("Hello")
