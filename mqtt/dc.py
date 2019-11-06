@@ -14,12 +14,16 @@ class DC:
     
     controlCourse = 0 
     controlCourseFlag = True
-    getDirectionFlag = True
+    getDirectionFlag = False 
     
-    LE_MAX = 0.80
+    LE_MAX = 1
+    LE_MAX_NEGATIVE = -1
     LE_CORRECTION = 0.7
+    right_index = 100
+    left_index = 100
     
     RE_MAX = 1
+    RE_MAX_NEGATIVE = -1
     RE_CORRECTION = 0.8
     
     i2c = busio.I2C(SCL, SDA)
@@ -37,14 +41,20 @@ class DC:
     def __init__(self):
         self.pca.frequency = 100
 
-    def forward(self):
+    def setPower(self, rightEngine, leftEngine):
+        self.right_index = rightEngine/100
+        self.left_index = leftEngine/100
+        print(self.right_index)
+
+    def forward(self, speed):
         self.getDirectionFlag = True
         self.controlCourseFlag = True
-        self.motor_hr.throttle = 1
-        self.motor_hl.throttle = self.LE_MAX
-        x = threading.Thread(target=self.getDirection).start()
+        self.motor_hr.throttle = self.right_index * self.RE_MAX * speed /10
+        self.motor_hl.throttle = self.left_index * self.LE_MAX * speed /10
+      #  x = threading.Thread(target=self.getDirection).start()
 
     def getDirection(self):
+        print(str(self.getDirectionFlag))
         while self.getDirectionFlag:
             now = time.time()
             mag = self.sensor.getMag()
@@ -57,12 +67,13 @@ class DC:
                 self.controlCourse = deg
                 self.controlCourseFlag = False
             
-            if (deg < self.controlCourse):
+            if (deg < self.controlCourse - 1):
                 self.courseCorrection(direction = "right")
-            elif (deg > self.controlCourse):
+            elif (deg > self.controlCourse + 1):
                 self.courseCorrection(direction = "left")
-            else:
-                self.courseCorrection(direction = "ahead")
+            #else:
+                #self.courseCorrection(direction = "ahead")
+                #self.getDirectionFlag = False
                 
             sleepTime = 1 - (time.time() - now)
             if sleepTime < 0.0:
@@ -72,38 +83,38 @@ class DC:
     def courseCorrection(self, direction):
         
         if (direction == "left"):
-            hr = self.RE_MAX
-            hl = self.LE_CORRECTION
+            hr = 0.3 #self.RE_MAX
+            hl = 0 #self.LE_CORRECTION
         elif (direction == "right"):
-            hr = self.RE_CORRECTION
-            hl = self.LE_MAX
+            hr = 0 # self.RE_CORRECTION
+            hl = 0.3 #self.LE_MAX
         else:
-            hr = self.RE_MAX
-            hl = self.LE_MAX
+            return
         
         if (self.getDirectionFlag == False):
             return
         
         self.motor_hr.throttle = hr
         self.motor_hl.throttle = hl
+        return
         
     def stop(self):
         self.getDirectionFlag = False
         self.motor_hr.throttle = 0
         self.motor_hl.throttle = 0
     
-    def right(self):
+    def right(self, speed):
         self.getDirectionFlag = False
-        self.motor_hr.throttle = -1
-        self.motor_hl.throttle = self.LE_MAX
+        self.motor_hr.throttle = self.right_index * self.RE_MAX_NEGATIVE*speed/10
+        self.motor_hl.throttle = self.left_index * self.LE_MAX*speed/10
 
-    def left(self):
+    def left(self, speed):
         self.getDirectionFlag = False
-        self.motor_hr.throttle = 1
-        self.motor_hl.throttle = self.LE_MAX * -1
+        self.motor_hr.throttle = self.right_index * self.RE_MAX*speed/10
+        self.motor_hl.throttle = self.left_index * self.LE_MAX_NEGATIVE*speed/10
     
-    def back(self):
+    def back(self, speed):
         self.getDirectionFlag = False
-        self.motor_hr.throttle = -1
-        self.motor_hl.throttle = self.LE_MAX * -1
+        self.motor_hr.throttle = self.right_index * self.RE_MAX_NEGATIVE*speed/10
+        self.motor_hl.throttle = self.left_index * self.LE_MAX_NEGATIVE*speed/10
         

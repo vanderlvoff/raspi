@@ -42,8 +42,11 @@ def moveCamera(msg):
     print(message_json)
     msg = json.loads(message_json)
     message = msg['msg']
-    
-    
+    y_speed = msg['y']
+    x_speed = msg['x']
+    rightEngine = msg['rightEngine']
+    leftEngine = msg['leftEngine']
+    dcmotor.setPower(rightEngine = rightEngine, leftEngine = leftEngine)
     #if message == current_message:
     #    return
     #else:
@@ -91,16 +94,16 @@ def moveCamera(msg):
         servo15.init(120) #horizon
 
     if message == "forward":
-        dcmotor.forward()
+        dcmotor.forward(speed = y_speed)
         
     if message == "right":
-        dcmotor.right()
+        dcmotor.right(speed = x_speed)
 
     if message == "left":
-        dcmotor.left()
+        dcmotor.left(speed = x_speed)
         
     if message == "back":
-        dcmotor.back()
+        dcmotor.back(speed = y_speed)
         
     if message == "stop":
         dcmotor.stop()
