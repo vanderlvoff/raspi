@@ -46,7 +46,8 @@ def moveCamera(msg):
     x_speed = msg['x']
     rightEngine = msg['rightEngine']
     leftEngine = msg['leftEngine']
-    dcmotor.setPower(rightEngine = rightEngine, leftEngine = leftEngine)
+    rightEngineBack = msg['rightEngineBack']
+    leftEngineBack = msg['leftEngineBack']
     #if message == current_message:
     #    return
     #else:
@@ -94,15 +95,19 @@ def moveCamera(msg):
         servo15.init(120) #horizon
 
     if message == "forward":
+        dcmotor.setPower(rightEngine = rightEngine, leftEngine = leftEngine)
         dcmotor.forward(speed = y_speed)
         
     if message == "right":
+        dcmotor.setPower(rightEngine = rightEngine, leftEngine = leftEngine)
         dcmotor.right(speed = x_speed)
 
     if message == "left":
+        dcmotor.setPower(rightEngine = rightEngine, leftEngine = leftEngine)
         dcmotor.left(speed = x_speed)
         
     if message == "back":
+        dcmotor.setPower(rightEngine = rightEngineBack, leftEngine = leftEngineBack)
         dcmotor.back(speed = y_speed)
         
     if message == "stop":
