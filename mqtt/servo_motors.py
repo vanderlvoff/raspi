@@ -14,7 +14,7 @@ class ServoMotors:
     i2c = busio.I2C(SCL, SDA)
     # Create a simple PCA9685 class instance.
     pca = PCA9685(i2c, address=0x41)
-    DEFAULT_NUMBER = 13
+    DEFAULT_NUMBER = 11
     servoMotor = servo.Servo(pca.channels[DEFAULT_NUMBER])
     
     def __init__(self, channel):
