@@ -8,7 +8,7 @@ from relay import Relay
 #from ultrasonic_sensor import UltrasonicSensor
 from spdc import DC
 
-MQTT_SERVER = "192.168.1.15"
+MQTT_SERVER = "localhost"
 MQTT_PATH = "rpi/gpio"
 
 current_message = ''
@@ -16,7 +16,7 @@ current_message = ''
 current_distance = 0.1
 
 #Dc motor object
-#dcmotor = DC()
+dcmotor = DC()
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -32,6 +32,7 @@ def moveCamera(msg):
     msg = json.loads(message_json)
     message = msg['msg']
     y_speed = msg['y']
+    speed = y_speed
     x_speed = msg['x']
     rightEngine = msg['rightEngine']
     leftEngine = msg['leftEngine']
@@ -40,19 +41,19 @@ def moveCamera(msg):
 
     if message == "forward":
         print("FORWARD: ",y_speed)
-        dcmotor.setPower(rightEngine = 100, leftEngine = 100)
-        dcmotor.forward(speed = 10)
+        #dcmotor.setPower(rightEngine = 100, leftEngine = 100)
+        dcmotor.forward(speed)
         
     if message == "right":
-        dcmotor.setPower(rightEngine = rightEngine, leftEngine = leftEngine)
+        #dcmotor.setPower(rightEngine = rightEngine, leftEngine = leftEngine)
         dcmotor.right(speed = x_speed)
 
     if message == "left":
-        dcmotor.setPower(rightEngine = rightEngine, leftEngine = leftEngine)
+        #dcmotor.setPower(rightEngine = rightEngine, leftEngine = leftEngine)
         dcmotor.left(speed = x_speed)
         
     if message == "back":
-        dcmotor.setPower(rightEngine = rightEngineBack, leftEngine = leftEngineBack)
+        #dcmotor.setPower(rightEngine = rightEngineBack, leftEngine = leftEngineBack)
         dcmotor.back(speed = y_speed)
         
     if message == "stop":
@@ -70,7 +71,7 @@ def moveCamera(msg):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     message2 = format(msg.payload.decode("UTF-8"))
-    print("This is on publish1: "+message2)
+    #print("This is on publish1: "+message2)
     moveCamera(msg)
     
 def on_publish(client, userdata, mid):

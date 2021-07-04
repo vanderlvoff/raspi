@@ -3,40 +3,46 @@
 import RPi.GPIO as GPIO
 
 class DC:
-    # set pins right engine
     
-    in1 = 37
-    in2 = 35
-    enA = 25
+    leftEnginePowerPin = 5
+    leftEnginePowerLn1 = 6
+    leftEnginePowerLn2 = 13
     
-    # set pins left engine
-    in3 = 33
-    in4 = 31
-    enB = 29
-
+    rightEnginePowerPin = 25
+    rightEnginePowerLn1 = 26
+    rightEnginePowerLn2 = 19
+    
+  
     engine1 = None
     engine2 = None
 
 
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.in1, GPIO.OUT)
-        GPIO.setup(self.in2, GPIO.OUT)
-        GPIO.setup(self.in3, GPIO.OUT)
-        GPIO.setup(self.in4, GPIO.OUT)
-        GPIO.setup(self.enA, GPIO.OUT)
-        GPIO.setup(self.enB, GPIO.OUT)
-        GPIO.output(self.in1, GPIO.LOW)
-        GPIO.output(self.in2, GPIO.LOW)
-        GPIO.output(self.in3, GPIO.LOW)
-        GPIO.output(self.in4, GPIO.LOW)
-        self.engine1 = GPIO.PWM(self.enA, 1000)
-        self.engine2 = GPIO.PWM(self.enB, 1000)
-        self.engine1.start(25)
-        self.engine2.start(25)
+        # set pins right engine
+        GPIO.setup(self.rightEnginePowerPin, GPIO.OUT)
+        #GPIO.output(self.rightEnginePowerPin, GPIO.LOW)
+        GPIO.setup(self.rightEnginePowerLn1, GPIO.OUT)
+        GPIO.output(self.rightEnginePowerLn1, GPIO.LOW)
+        GPIO.setup(self.rightEnginePowerLn2, GPIO.OUT)
+        GPIO.output(self.rightEnginePowerLn2, GPIO.LOW)
+        
+        # set pins left engine
+        GPIO.setup(self.leftEnginePowerPin, GPIO.OUT)
+        #GPIO.output(self.leftEnginePowerPin, GPIO.LOW)
+        GPIO.setup(self.leftEnginePowerLn1, GPIO.OUT)
+        GPIO.output(self.leftEnginePowerLn1, GPIO.LOW)
+        GPIO.setup(self.leftEnginePowerLn2, GPIO.OUT)
+        GPIO.output(self.leftEnginePowerLn2, GPIO.LOW)
+        
+        self.rightEngine = GPIO.PWM(self.rightEnginePowerPin, 1000)
+        self.leftEngine = GPIO.PWM(self.leftEnginePowerPin, 1000)
+        
+        self.rightEngine.start(0)
+        self.leftEngine.start(0)
 
-    controlCourse = 0 
-    controlCourseFlag = True
+   # controlCourse = 0 
+   # controlCourseFlag = True
     getDirectionFlag = False 
     
     LE_MAX = 1
@@ -51,29 +57,83 @@ class DC:
         print(self.right_index)
 
     def forward(self, speed):
-        print("DC forward")
-        GPIO.output(self.in1, GPIO.HIGH)
-        GPIO.output(self.in2, GPIO.LOW)
-        GPIO.output(self.in3, GPIO.HIGH)
-        GPIO.output(self.in4, GPIO.LOW)
-    
+        rightEnSpeed = int(speed * 10 * 0.92)
+        leftEnSpeed = speed * 10
+        GPIO.output(self.leftEnginePowerLn1, GPIO.HIGH)
+        GPIO.output(self.leftEnginePowerLn2, GPIO.LOW)
+
+        GPIO.output(self.leftEnginePowerPin, GPIO.HIGH)
+        
+        GPIO.output(self.rightEnginePowerLn1, GPIO.HIGH)
+        GPIO.output(self.rightEnginePowerLn2, GPIO.LOW)
+        
+        GPIO.output(self.rightEnginePowerPin, GPIO.HIGH)
+
+        self.rightEngine.ChangeDutyCycle(rightEnSpeed)
+        self.leftEngine.ChangeDutyCycle(leftEnSpeed)
+
+        
     def stop(self):
         self.getDirectionFlag = False
-        #self.motor_hr.throttle = 0
-        #self.motor_hl.throttle = 0
+        print("DC stop")
+        GPIO.output(self.leftEnginePowerLn1, GPIO.HIGH)
+        GPIO.output(self.leftEnginePowerLn2, GPIO.LOW)
+        GPIO.output(self.leftEnginePowerPin, GPIO.LOW)
+        GPIO.output(self.rightEnginePowerLn1, GPIO.HIGH)
+        GPIO.output(self.rightEnginePowerLn2, GPIO.LOW)
+        GPIO.output(self.leftEnginePowerPin, GPIO.LOW)
+        
+        self.rightEngine.ChangeDutyCycle(0)
+        self.leftEngine.ChangeDutyCycle(0)
     
     def right(self, speed):
         self.getDirectionFlag = False
-        #self.motor_hr.throttle = self.right_index * self.RE_MAX_NEGATIVE*speed/10
-        #self.motor_hl.throttle = self.left_index * self.LE_MAX*speed/10
+        rightEnSpeed = speed * 10
+        leftEnSpeed = speed * 10
+        GPIO.output(self.leftEnginePowerLn1, GPIO.HIGH)
+        GPIO.output(self.leftEnginePowerLn2, GPIO.LOW)
+
+        GPIO.output(self.leftEnginePowerPin, GPIO.HIGH)
+        
+        GPIO.output(self.rightEnginePowerLn1, GPIO.LOW)
+        GPIO.output(self.rightEnginePowerLn2, GPIO.HIGH)
+        
+        GPIO.output(self.rightEnginePowerPin, GPIO.HIGH)
+
+        self.rightEngine.ChangeDutyCycle(rightEnSpeed)
+        self.leftEngine.ChangeDutyCycle(leftEnSpeed)
 
     def left(self, speed):
         self.getDirectionFlag = False
-        #self.motor_hr.throttle = self.right_index * self.RE_MAX*speed/10
-        #self.motor_hl.throttle = self.left_index * self.LE_MAX_NEGATIVE*speed/10
+        rightEnSpeed = speed * 10
+        leftEnSpeed = speed * 10
+        GPIO.output(self.leftEnginePowerLn1, GPIO.LOW)
+        GPIO.output(self.leftEnginePowerLn2, GPIO.HIGH)
+
+        GPIO.output(self.leftEnginePowerPin, GPIO.HIGH)
+        
+        GPIO.output(self.rightEnginePowerLn1, GPIO.HIGH)
+        GPIO.output(self.rightEnginePowerLn2, GPIO.LOW)
+        
+        GPIO.output(self.rightEnginePowerPin, GPIO.HIGH)
+
+        self.rightEngine.ChangeDutyCycle(rightEnSpeed)
+        self.leftEngine.ChangeDutyCycle(leftEnSpeed)
     
     def back(self, speed):
         self.getDirectionFlag = False
-        #self.motor_hr.throttle = self.right_index * self.RE_MAX_NEGATIVE*speed/10
-        #self.motor_hl.throttle = self.left_index * self.LE_MAX_NEGATIVE*speed/10
+        rightEnSpeed = int(speed * 10 * 0.92)
+        leftEnSpeed = speed * 10
+        GPIO.output(self.leftEnginePowerLn1, GPIO.LOW)
+        GPIO.output(self.leftEnginePowerLn2, GPIO.HIGH)
+
+        GPIO.output(self.leftEnginePowerPin, GPIO.HIGH)
+        
+        GPIO.output(self.rightEnginePowerLn1, GPIO.LOW)
+        GPIO.output(self.rightEnginePowerLn2, GPIO.HIGH)
+        
+        GPIO.output(self.rightEnginePowerPin, GPIO.HIGH)
+
+        self.rightEngine.ChangeDutyCycle(rightEnSpeed)
+        self.leftEngine.ChangeDutyCycle(leftEnSpeed)
         
