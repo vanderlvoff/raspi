@@ -5,20 +5,15 @@ import RPi.GPIO as GPIO
 class DC:
     
     rightEnginePowerPin = 5
-    rightEnginePowerLn1 = 13
-    rightEnginePowerLn2 = 6
+    rightEnginePowerLn1 = 6
+    rightEnginePowerLn2 = 13
 
     leftEnginePowerPin = 10
-    leftEnginePowerLn1 = 11
-    leftEnginePowerLn2 = 9
-
-  # leftEnginePowerPin = 5
-  #  leftEnginePowerLn1 = 6
-  #  leftEnginePowerLn2 = 13
+    leftEnginePowerLn1 = 9
+    leftEnginePowerLn2 = 11
     
-  #  rightEnginePowerPin = 10
-  #  rightEnginePowerLn1 = 9
-  #  rightEnginePowerLn2 = 11
+    rightHighLimit = 100
+    leftHighLimit = 100
 
     engine1 = None
     engine2 = None
@@ -55,17 +50,18 @@ class DC:
     LE_MAX = 1
     LE_MAX_NEGATIVE = -1
     LE_CORRECTION = 0.7
-    right_index = 100
-    left_index = 100
     
     def setPower(self, rightEngine, leftEngine):
-        self.right_index = rightEngine/100
-        self.left_index = leftEngine/100
-        print(self.right_index)
+        self.rightHighLimit = rightEngine
+        self.leftHighLimit = leftEngine
+        print(f"right limit: {self.rightHighLimit}")
+        print(f"left limit: {self.leftHighLimit}")
 
     def forward(self, speed):
-        rightEnSpeed = speed * 10
-        leftEnSpeed = speed * 10
+        rightEnSpeed = int(speed * 10 * (self.rightHighLimit / 100))
+        leftEnSpeed = int(speed * 10 * (self.leftHighLimit / 100))
+        print(f"rightEnSpeed: {rightEnSpeed}")
+        print(f"leftEnSpeed: {leftEnSpeed}")
         GPIO.output(self.leftEnginePowerLn1, GPIO.HIGH)
         GPIO.output(self.leftEnginePowerLn2, GPIO.LOW)
 
@@ -146,3 +142,4 @@ class DC:
 
 #dc = DC()
 #dc.forward(0)
+

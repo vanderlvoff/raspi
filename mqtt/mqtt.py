@@ -5,7 +5,7 @@ import json
 #custom classes
 from relay import Relay
 from ultrasonic_sensor import UltrasonicSensor
-from dc import DC
+from spdc import DC
 from servo_motors import ServoMotors
 from led import Led
 from robot import Robot
@@ -45,10 +45,8 @@ def moveCamera(msg):
     message = msg['msg']
     y_speed = msg['y']
     x_speed = msg['x']
-    rightEngine = msg['rightEngine']
-    leftEngine = msg['leftEngine']
-    rightEngineBack = msg['rightEngineBack']
-    leftEngineBack = msg['leftEngineBack']
+    enginePowers = msg['enginePowers']
+    formFactor = msg['formFactor']
     #if message == current_message:
     #    return
     #else:
