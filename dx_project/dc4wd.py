@@ -12,10 +12,10 @@ class DC4WD:
     pca = PCA9685(i2c, address=0x40)
     speed_limit = 65535
 
-    rightEngine = 0
-    leftEngine = 0
-    rightEngineBack = 0
-    leftEngineBack = 0
+    rightEngineHead = 98
+    leftEngineHead = 98
+    rightEngineRear = 98
+    leftEngineRear = 98
 
     def __init__(self):
         self.pca.frequency = 1500
@@ -27,7 +27,7 @@ class DC4WD:
         self.leftEngineRear = leftEngineRear
     
     def calculate_speed(self, speed, limit):
-        return int(speed*limit)
+        return int(speed*(limit/100))
         
     def forward(self, speed):
         #left - head
@@ -41,8 +41,8 @@ class DC4WD:
         self.pca.channels[0].duty_cycle = self.calculate_speed(speed, self.leftEngineRear)
         
         #right - rear
-        self.pca.channels[6].duty_cycle = 0xffff
-        self.pca.channels[5].duty_cycle = 0
+        self.pca.channels[5].duty_cycle = 0xffff
+        self.pca.channels[6].duty_cycle = 0
         self.pca.channels[7].duty_cycle = self.calculate_speed(speed, self.rightEngineRear)
         
         #right - head
@@ -60,8 +60,8 @@ class DC4WD:
 
         
         #right - rear
-        self.pca.channels[6].duty_cycle = 0
         self.pca.channels[5].duty_cycle = 0
+        self.pca.channels[6].duty_cycle = 0
                 
         #right - head
         self.pca.channels[9].duty_cycle = 0
@@ -80,8 +80,8 @@ class DC4WD:
         self.pca.channels[0].duty_cycle = self.calculate_speed(speed, self.leftEngineRear)
         
         #right - rear
-        self.pca.channels[6].duty_cycle = 0
-        self.pca.channels[5].duty_cycle = 0xffff
+        self.pca.channels[5].duty_cycle = 0
+        self.pca.channels[6].duty_cycle = 0xffff
         self.pca.channels[7].duty_cycle = self.calculate_speed(speed, self.rightEngineRear)
         
         #right - head
@@ -90,7 +90,7 @@ class DC4WD:
         self.pca.channels[8].duty_cycle = self.calculate_speed(speed, self.rightEngineHead)
         
         
-    def move_right(self):
+    def move_right(self, speed):
         #left - head
         self.pca.channels[12].duty_cycle = 0xffff
         self.pca.channels[13].duty_cycle = 0
@@ -102,8 +102,8 @@ class DC4WD:
         self.pca.channels[0].duty_cycle = self.calculate_speed(speed, self.leftEngineRear)
         
         #right - rear
-        self.pca.channels[6].duty_cycle = 0xffff
-        self.pca.channels[5].duty_cycle = 0
+        self.pca.channels[5].duty_cycle = 0xffff
+        self.pca.channels[6].duty_cycle = 0
         self.pca.channels[7].duty_cycle = self.calculate_speed(speed, self.rightEngineRear)
         
         #right - head
@@ -111,7 +111,7 @@ class DC4WD:
         self.pca.channels[10].duty_cycle = 0xffff
         self.pca.channels[8].duty_cycle = self.calculate_speed(speed, self.rightEngineHead)
         
-    def move_left(self):
+    def move_left(self, speed):
         
         #left - head
         self.pca.channels[12].duty_cycle = 0
@@ -124,8 +124,8 @@ class DC4WD:
         self.pca.channels[0].duty_cycle = self.calculate_speed(speed, self.leftEngineRear)
         
         #right - rear
-        self.pca.channels[6].duty_cycle = 0
-        self.pca.channels[5].duty_cycle = 0xffff
+        self.pca.channels[5].duty_cycle = 0
+        self.pca.channels[6].duty_cycle = 0xffff
         self.pca.channels[7].duty_cycle = self.calculate_speed(speed, self.rightEngineRear)
         
         #right - head
@@ -134,7 +134,7 @@ class DC4WD:
         self.pca.channels[8].duty_cycle = self.calculate_speed(speed, self.rightEngineHead)   
         
 
-    def left(self):
+    def left(self, speed):
         #left - head
         self.pca.channels[12].duty_cycle = 0
         self.pca.channels[13].duty_cycle = 0xffff
@@ -146,8 +146,8 @@ class DC4WD:
         self.pca.channels[0].duty_cycle = self.calculate_speed(speed, self.leftEngineRear)
         
         #right - rear
-        self.pca.channels[6].duty_cycle = 0xffff
-        self.pca.channels[5].duty_cycle = 0
+        self.pca.channels[5].duty_cycle = 0xffff
+        self.pca.channels[6].duty_cycle = 0
         self.pca.channels[7].duty_cycle = self.calculate_speed(speed, self.rightEngineRear)
         
         #right - head
@@ -155,7 +155,7 @@ class DC4WD:
         self.pca.channels[10].duty_cycle = 0
         self.pca.channels[8].duty_cycle = self.calculate_speed(speed, self.rightEngineHead)
     
-    def back(self):
+    def back(self, speed):
         #left - head
         self.pca.channels[12].duty_cycle = 0
         self.pca.channels[13].duty_cycle = 0xffff
@@ -167,8 +167,8 @@ class DC4WD:
         self.pca.channels[0].duty_cycle = self.calculate_speed(speed, self.leftEngineRear)
         
         #right - rear
-        self.pca.channels[6].duty_cycle = 0
-        self.pca.channels[5].duty_cycle = 0xffff
+        self.pca.channels[5].duty_cycle = 0
+        self.pca.channels[6].duty_cycle = 0xffff
         self.pca.channels[7].duty_cycle = self.calculate_speed(speed, self.rightEngineRear)
         
         #right - head
