@@ -1,0 +1,12 @@
+[Util]
+Description=LCD 16
+After=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/projects/raspi/mqtt/rpi_lcd.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
