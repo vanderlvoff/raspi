@@ -24,13 +24,13 @@ def controlDc(msg):
     msg = json.loads(message_json)
 
     message = msg['msg']
-    y_speed = msg['y']
-    x_speed = msg['x']
-    rightEngineHead = msg['rightEngineHead']
-    leftEngineHead = msg['leftEngineHead']
-    rightEngineRear = msg['rightEngineRear']
-    leftEngineRear = msg['leftEngineRear']
-    dcmotor.setPower(
+    y_speed = msg['y'] * 5000
+    x_speed = msg['x'] * 5000
+    rightEngineHead = msg['enginePowers'][1]
+    leftEngineHead = msg['enginePowers'][0]
+    rightEngineRear = msg['enginePowers'][3]
+    leftEngineRear = msg['enginePowers'][2]
+    dcmotor.set_power(
         rightEngineHead = rightEngineHead,
         leftEngineHead = leftEngineHead,
         rightEngineRear = rightEngineRear,
@@ -44,13 +44,13 @@ def controlDc(msg):
         dcmotor.right(speed = x_speed)
 
     if message == "move_right":
-        dcmotor.right(speed = x_speed)
+        dcmotor.move_right(speed = x_speed)
 
     if message == "left":
         dcmotor.left(speed = x_speed)
         
     if message == "move_left":
-        dcmotor.left(speed = x_speed)
+        dcmotor.move_left(speed = x_speed)
         
     if message == "back":
         dcmotor.back(speed = y_speed)
